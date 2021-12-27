@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="static/style.css" type="text/css" media="all">
+        <title>
+            {% block title %}
+                {{ title }}
+            {% endblock title %}
+        </title>
+    </head>
+    <body>
+        <div class="wrapper">
+            <header>
+                <h1>{{ title }}</h1>
+            </header>
+            <main>
+                {% block content %}
+                {% endblock content %}
+            </main>
+        </div>
+    </body>
+</html>
