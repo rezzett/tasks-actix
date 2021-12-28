@@ -1,18 +1,36 @@
+mod models;
 mod routes;
+mod schema;
 
 use actix_web::{App, HttpServer};
+use diesel::prelude::*;
+use diesel::sqlite::SqliteConnection;
+use dotenv::dotenv;
 use routes::*;
+use std::env;
 use tera::Tera;
+
+#[macro_use]
+extern crate diesel;
 
 struct AppData {
     tera: Tera,
+    db: SqliteConnection,
+}
+
+fn establish_conn() -> SqliteConnection {
+    dotenv().ok();
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    SqliteConnection::establish(&db_url).expect("Connection failed")
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
+        let db = establish_conn();
         let app_data = AppData {
             tera: Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*")).unwrap(),
+            db,
         };
         App::new()
             .data(app_data)
