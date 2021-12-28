@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    add task
+    <form action="127.0.0.1:8081/addtask" method="post" enctype="post/x-www-form-urlencoded">
+        <label> Task: 
+            <input type="text" name="task" value="" > 
+        </label>
+        <button type="submit" class="send_btn">Ok</button>
+    </form>
 {% endblock content %}

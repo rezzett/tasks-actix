@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    add category
+    <h3>New Category</h3>
+    <form action="127.0.0.1:8081/addcategory" method="post" enctype="post/x-www-form-urlencoded">
+        <label> Category name: 
+            <input type="text" name="category" value="" > 
+        </label>
+        <button type="submit" class="send_btn">Ok</button>
+    </form>
 {% endblock content %}
