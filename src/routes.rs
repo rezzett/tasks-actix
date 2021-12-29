@@ -1,6 +1,17 @@
 use crate::AppData;
 use actix_web::{get, post, web, HttpResponse, Responder};
+use serde::Deserialize;
 use tera::Context;
+
+#[derive(Deserialize)]
+struct CategoryForm {
+    category: String,
+}
+
+#[derive(Deserialize)]
+struct TaskForm {
+    task: String,
+}
 
 #[get("/")]
 async fn index(data: web::Data<AppData>) -> impl Responder {
@@ -27,8 +38,8 @@ async fn add_task_get(data: web::Data<AppData>) -> impl Responder {
 }
 
 #[post("/addtask")]
-async fn add_task_post() -> impl Responder {
-    HttpResponse::Ok().body("POST ADD TASK")
+async fn add_task_post(form_data: web::Form<TaskForm>) -> impl Responder {
+    HttpResponse::Ok().body(format!("<h2> {}</h2>", &form_data.task))
 }
 
 #[get("/addcategory")]
@@ -44,8 +55,8 @@ async fn add_category_get(data: web::Data<AppData>) -> impl Responder {
 }
 
 #[post("/addcategory")]
-async fn add_category_post() -> impl Responder {
-    HttpResponse::Ok().body("POST ADD CATEGORY")
+async fn add_category_post(form_data: web::Form<CategoryForm>) -> impl Responder {
+    HttpResponse::Ok().body(format!("<h2> {} </h2>", &form_data.category))
 }
 
 #[get("*")]
