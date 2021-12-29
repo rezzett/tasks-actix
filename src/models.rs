@@ -1,7 +1,8 @@
 use super::schema::{categories, tasks};
 use diesel::{prelude::*, Insertable, Queryable, SqliteConnection};
+use serde::Serialize;
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize)]
 pub struct Category {
     pub id: i32,
     pub name: String,
@@ -29,7 +30,6 @@ pub struct NewTask<'a> {
 }
 
 impl Category {
-    #[allow(unused)]
     pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
         categories::table.load::<Category>(&*conn)
     }
@@ -41,6 +41,26 @@ impl Category {
         let new_category = NewCategory { name };
         diesel::insert_into(categories::table)
             .values(&new_category)
+            .execute(&*conn)
+    }
+}
+
+impl Task {
+    pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
+        tasks::table.load::<Task>(&*conn)
+    }
+
+    pub fn add_task(
+        content: &str,
+        category_id: i32,
+        conn: &SqliteConnection,
+    ) -> Result<usize, diesel::result::Error> {
+        let new_task = NewTask {
+            content,
+            category_id,
+        };
+        diesel::insert_into(tasks::table)
+            .values(&new_task)
             .execute(&*conn)
     }
 }
