@@ -1,3 +1,4 @@
+use crate::models::*;
 use crate::AppData;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use serde::Deserialize;
@@ -55,8 +56,15 @@ async fn add_category_get(data: web::Data<AppData>) -> impl Responder {
 }
 
 #[post("/addcategory")]
-async fn add_category_post(form_data: web::Form<CategoryForm>) -> impl Responder {
-    HttpResponse::Ok().body(format!("<h2> {} </h2>", &form_data.category))
+async fn add_category_post(
+    form_data: web::Form<CategoryForm>,
+    app_data: web::Data<AppData>,
+) -> impl Responder {
+    let res = match Category::add_category(&form_data.category, &app_data.db) {
+        Ok(s) => format!("{} records added", s),
+        Err(e) => format!("Error: {}", e),
+    };
+    HttpResponse::Ok().body(format!("<h2> {} </h2>", res)) // TODO redirect home or err
 }
 
 #[get("*")]

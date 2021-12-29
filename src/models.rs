@@ -1,5 +1,5 @@
 use super::schema::{categories, tasks};
-use diesel::{Insertable, Queryable};
+use diesel::{prelude::*, Insertable, Queryable, SqliteConnection};
 
 #[derive(Queryable)]
 pub struct Category {
@@ -26,4 +26,21 @@ pub struct Task {
 pub struct NewTask<'a> {
     pub content: &'a str,
     pub category_id: i32,
+}
+
+impl Category {
+    #[allow(unused)]
+    pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
+        categories::table.load::<Category>(&*conn)
+    }
+
+    pub fn add_category(
+        name: &str,
+        conn: &SqliteConnection,
+    ) -> Result<usize, diesel::result::Error> {
+        let new_category = NewCategory { name };
+        diesel::insert_into(categories::table)
+            .values(&new_category)
+            .execute(&*conn)
+    }
 }
