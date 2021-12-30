@@ -2,10 +2,18 @@
 
 {% block content %}
     <form action="/addtask" method="post" enctype="post/x-www-form-urlencoded">
-        <label> Task: 
-            <input type="text" name="task" value="" > 
+        <label>
+            <input type="text" name="task" value="" placeholder="New Task" required> 
         </label>
-        <button type="submit" class="send_btn">Ok</button>
+
+        <select name="category_id"  required placeholder="Choose Category"> 
+            <option value="" disabled selected hidden >Choose Category</option>
+            {% for cat in categories %}
+            <option value="{{cat.id}}">{{cat.name}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="send_btn">Add New Task</button>
     </form>
+
     
 {% endblock content %}
