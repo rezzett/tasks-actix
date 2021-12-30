@@ -14,7 +14,7 @@ pub struct NewCategory<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Associations, Identifiable)]
+#[derive(Queryable, Associations, Identifiable, Serialize)]
 #[belongs_to(Category)]
 pub struct Task {
     pub id: i32,
@@ -30,6 +30,7 @@ pub struct NewTask<'a> {
 }
 
 impl Category {
+    // TODO by id, delete
     pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
         categories::table.load::<Category>(&*conn)
     }
@@ -46,6 +47,7 @@ impl Category {
 }
 
 impl Task {
+    // TODO task with cat name, by id, by category, delete
     pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
         tasks::table.load::<Task>(&*conn)
     }

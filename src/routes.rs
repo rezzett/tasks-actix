@@ -12,14 +12,20 @@ struct CategoryForm {
 #[derive(Deserialize)]
 struct TaskForm {
     task: String,
-    category_id: i32, // TODO make form
+    category_id: i32,
 }
 
 #[get("/")]
 async fn index(data: web::Data<AppData>) -> impl Responder {
-    let mut ctx = Context::new();
+    let categories = Category::all(&data.db).unwrap(); // TODO unwrap
+    let tasks = Task::all(&data.db).unwrap(); // TODO unwrap
     let title = "Home";
+
+    let mut ctx = Context::new();
     ctx.insert("title", title);
+    ctx.insert("categories", &categories);
+    ctx.insert("tasks", &tasks);
+
     let rendered = data
         .tera
         .render("index.html", &ctx)
@@ -30,9 +36,9 @@ async fn index(data: web::Data<AppData>) -> impl Responder {
 #[get("/addtask")]
 async fn add_task_get(data: web::Data<AppData>) -> impl Responder {
     let categories = Category::all(&data.db).unwrap(); // TODO remove unwrap
-    let mut ctx = Context::new();
     let title = "Add Task";
 
+    let mut ctx = Context::new();
     ctx.insert("title", title);
     ctx.insert("categories", &categories);
 
@@ -48,7 +54,7 @@ async fn add_task_post(
     form_data: web::Form<TaskForm>,
     app_data: web::Data<AppData>,
 ) -> impl Responder {
-    let res = match Task::add_task(&form_data.task, 0, &app_data.db) {
+    let res = match Task::add_task(&form_data.task, form_data.category_id, &app_data.db) {
         Ok(s) => format!("{} tasks added", s),
         Err(e) => format!("Error: {}", e),
     };

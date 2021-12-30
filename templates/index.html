@@ -3,10 +3,22 @@
 {% block content %}
     <div class="index_page">
         <div class="sidebar">
-            sidebar 
+            <h3>Categories</h3>
+            <ul>
+                {% for cat in categories %}
+                    <!-- add id to href to show task for certain category-->
+                    <li><a href="#" >{{cat.name}} {{cat.id}}</a></li> 
+                {% endfor %}
+            </ul>
         </div>
         <div class="content">
-            content 
+            {% for task in tasks %}
+                <div class="task-card">
+                    <h4>{{ task.category_id }}</h4> 
+                    <p>{{task.content}}</p>
+                    <a href="#">delete task {{task.id}}</a>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock content %}
