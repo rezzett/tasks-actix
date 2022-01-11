@@ -18,7 +18,8 @@ struct TaskForm {
 #[get("/")]
 async fn index(data: web::Data<AppData>) -> impl Responder {
     let categories = Category::all(&data.db).unwrap(); // TODO unwrap
-    let tasks = Task::all(&data.db).unwrap(); // TODO unwrap
+                                                       //let tasks = Task::all(&data.db).unwrap(); // TODO unwrap
+    let tasks = Task::all_with_category(&data.db).unwrap();
     let title = "Home";
 
     let mut ctx = Context::new();
@@ -83,6 +84,12 @@ async fn add_category_post(
         Err(e) => format!("Error: {}", e),
     };
     HttpResponse::Ok().body(format!("<h2> {} </h2>", res)) // TODO redirect home or err
+}
+
+#[get("/category/{id}")]
+async fn category(data: web::Data<AppData>, path: web::Path<i32>) -> impl Responder {
+    //TODO render category.html with tasks for certain category
+    HttpResponse::Ok().body(&format!("Cat id: {}", path.into_inner()))
 }
 
 #[get("*")]

@@ -1860,6 +1860,7 @@ dependencies = [
  "diesel",
  "dotenv",
  "serde",
+ "serde_derive",
  "tera",
 ]
 

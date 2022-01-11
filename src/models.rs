@@ -51,7 +51,7 @@ impl Category {
 }
 
 impl Task {
-    // TODO task with cat name, by id, by category, delete
+    // TODO  by category, delete
     pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
         tasks::table.load::<Task>(&*conn)
     }
@@ -63,6 +63,19 @@ impl Task {
             .inner_join(categories::table.on(tasks::category_id.eq(categories::id)))
             .select((tasks::all_columns, categories::name))
             .load::<(Task, String)>(&*conn)
+    }
+
+    pub fn by_id(conn: &SqliteConnection, id: i32) -> Result<Self, diesel::result::Error> {
+        tasks::table.find(id).get_result::<Task>(&*conn)
+    }
+
+    pub fn by_category(
+        conn: &SqliteConnection,
+        cat_id: i32,
+    ) -> Result<Vec<Self>, diesel::result::Error> {
+        tasks::table
+            .filter(tasks::category_id.eq(cat_id))
+            .load::<Task>(&*conn)
     }
 
     pub fn add_task(

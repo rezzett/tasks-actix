@@ -40,6 +40,7 @@ async fn main() -> std::io::Result<()> {
             .service(add_category_post)
             .service(add_task_get)
             .service(add_task_post)
+            .service(category)
             .service(not_found)
     })
     .bind("127.0.0.1:8081")?
