@@ -18,7 +18,6 @@ struct TaskForm {
 #[get("/")]
 async fn index(data: web::Data<AppData>) -> impl Responder {
     let categories = Category::all(&data.db).unwrap(); // TODO unwrap
-                                                       //let tasks = Task::all(&data.db).unwrap(); // TODO unwrap
     let tasks = Task::all_with_category(&data.db).unwrap();
     let title = "Home";
 
@@ -88,8 +87,21 @@ async fn add_category_post(
 
 #[get("/category/{id}")]
 async fn category(data: web::Data<AppData>, path: web::Path<i32>) -> impl Responder {
-    //TODO render category.html with tasks for certain category
-    HttpResponse::Ok().body(&format!("Cat id: {}", path.into_inner()))
+    let cat_id = path.into_inner();
+    let tasks = Task::by_category(&data.db, cat_id).unwrap(); // TODO unwrap
+    let categories = Category::all(&data.db).unwrap(); // TODO unwrap
+    let cat_name = Category::by_id(&data.db, cat_id).unwrap(); // TODO unwrap;
+
+    let mut ctx = Context::new();
+    ctx.insert("tasks", &tasks);
+    ctx.insert("title", &format!("Category:{}", &cat_name.name));
+    ctx.insert("categories", &categories);
+
+    let rendered = data
+        .tera
+        .render("category.html", &ctx)
+        .expect("Template not found 'category.html'");
+    HttpResponse::Ok().body(rendered)
 }
 
 #[get("*")]
