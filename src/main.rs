@@ -34,7 +34,13 @@ async fn main() -> std::io::Result<()> {
         };
         App::new()
             .data(app_data)
-            .service(actix_files::Files::new("/static", ".").show_files_listing())
+            .service(
+                actix_files::Files::new(
+                    "/static",
+                    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("static"),
+                )
+                .show_files_listing(),
+            )
             .service(index)
             .service(add_category_get)
             .service(add_category_post)
