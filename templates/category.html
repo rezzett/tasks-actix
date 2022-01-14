@@ -7,7 +7,7 @@
             <ul>
                 {% for cat in categories %}
                     <!-- add id to href to show task for certain category-->
-                    <li><a href="category/{{cat.id}}" >{{cat.name}}</a></li> 
+                    <li><a href="{{cat.id}}" >{{cat.name}}</a></li> 
                 {% endfor %}
             </ul>
         </div>
