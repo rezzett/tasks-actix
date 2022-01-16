@@ -14,9 +14,11 @@
         <div class="content">
             {% for task in tasks %}
                 <div class="task-card">
-                    <h4>Category:{{ task.1 }}</h4> 
+                    <h4>{{ task.1 }}</h4> 
                     <p>{{task.0.content}}</p>
-                    <a href="#">delete task {{task.0.id}}</a>
+                    <a class="close_btn" href="{{task.0.id}}">
+                        <img src="/static/close.png" alt="">
+                    </a>
                 </div>
             {% endfor %}
         </div>

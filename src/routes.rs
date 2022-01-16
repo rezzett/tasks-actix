@@ -94,7 +94,7 @@ async fn category(data: web::Data<AppData>, path: web::Path<i32>) -> impl Respon
 
     let mut ctx = Context::new();
     ctx.insert("tasks", &tasks);
-    ctx.insert("title", &format!("Category:{}", &cat_name.name));
+    ctx.insert("title", &cat_name.name);
     ctx.insert("categories", &categories);
 
     let rendered = data

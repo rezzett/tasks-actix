@@ -15,7 +15,9 @@
             {% for task in tasks %}
                 <div class="task-card">
                     <p>{{task.content}}</p>
-                    <a href="#">delete task {{task.id}}</a>
+                    <a class="close_btn" href="{{task.id}}">
+                        <img src="/static/close.png" alt="">
+                    </a>
                 </div>
             {% endfor %}
         </div>
