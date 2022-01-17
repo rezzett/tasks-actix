@@ -30,7 +30,6 @@ pub struct NewTask<'a> {
 }
 
 impl Category {
-    // TODO  delete edit
     pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
         categories::table.load::<Category>(&*conn)
     }
@@ -51,7 +50,6 @@ impl Category {
 }
 
 impl Task {
-    // TODO delete edit
     pub fn all(conn: &SqliteConnection) -> Result<Vec<Self>, diesel::result::Error> {
         tasks::table.load::<Task>(&*conn)
     }
@@ -89,6 +87,12 @@ impl Task {
         };
         diesel::insert_into(tasks::table)
             .values(&new_task)
+            .execute(&*conn)
+    }
+
+    pub fn delete(conn: &SqliteConnection, id: i32) -> Result<usize, diesel::result::Error> {
+        diesel::delete(tasks::table)
+            .filter(tasks::id.eq(id))
             .execute(&*conn)
     }
 }

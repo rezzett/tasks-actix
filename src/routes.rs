@@ -1,6 +1,6 @@
 use crate::models::*;
 use crate::AppData;
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{get, http::header, post, web, HttpResponse, Responder};
 use serde::Deserialize;
 use tera::Context;
 
@@ -54,11 +54,18 @@ async fn add_task_post(
     form_data: web::Form<TaskForm>,
     app_data: web::Data<AppData>,
 ) -> impl Responder {
-    let res = match Task::add_task(&form_data.task, form_data.category_id, &app_data.db) {
+    let _res = match Task::add_task(&form_data.task, form_data.category_id, &app_data.db) {
         Ok(s) => format!("{} tasks added", s),
         Err(e) => format!("Error: {}", e),
     };
-    HttpResponse::Ok().body(format!("<h2> {}</h2>", res))
+    HttpResponse::Found().header(header::LOCATION, "/").finish()
+}
+
+#[get("/task/{id}")]
+async fn delete_task(data: web::Data<AppData>, path: web::Path<i32>) -> impl Responder {
+    let id = path.into_inner();
+    let affects = Task::delete(&data.db, id).unwrap();
+    HttpResponse::Ok().body(format!("Delete {} task with id {}", affects, id))
 }
 
 #[get("/addcategory")]

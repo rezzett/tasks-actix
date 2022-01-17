@@ -15,7 +15,7 @@
             {% for task in tasks %}
                 <div class="task-card">
                     <p>{{task.content}}</p>
-                    <a class="close_btn" href="{{task.id}}">
+                    <a class="close_btn" href="/task/{{task.id}}">
                         <img src="/static/close.png" alt="">
                     </a>
                 </div>
