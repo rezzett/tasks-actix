@@ -54,18 +54,19 @@ async fn add_task_post(
     form_data: web::Form<TaskForm>,
     app_data: web::Data<AppData>,
 ) -> impl Responder {
-    let _res = match Task::add_task(&form_data.task, form_data.category_id, &app_data.db) {
-        Ok(s) => format!("{} tasks added", s),
-        Err(e) => format!("Error: {}", e),
-    };
-    HttpResponse::Found().header(header::LOCATION, "/").finish()
+    match Task::add_task(&form_data.task, form_data.category_id, &app_data.db) {
+        Ok(_) => redirect_to("/"),
+        Err(_) => redirect_to("/error/DB ERROR: Failed to add a new task"),
+    }
 }
 
 #[get("/task/{id}")]
 async fn delete_task(data: web::Data<AppData>, path: web::Path<i32>) -> impl Responder {
     let id = path.into_inner();
-    let affects = Task::delete(&data.db, id).unwrap();
-    HttpResponse::Ok().body(format!("Delete {} task with id {}", affects, id))
+    match Task::delete(&data.db, id) {
+        Ok(_) => redirect_to("/"),
+        Err(_) => redirect_to("/error/DB ERROR: Failed to delete the task"),
+    }
 }
 
 #[get("/addcategory")]
@@ -85,11 +86,10 @@ async fn add_category_post(
     form_data: web::Form<CategoryForm>,
     app_data: web::Data<AppData>,
 ) -> impl Responder {
-    let res = match Category::add_category(&form_data.category, &app_data.db) {
-        Ok(s) => format!("{} records added", s),
-        Err(e) => format!("Error: {}", e),
-    };
-    HttpResponse::Ok().body(format!("<h2> {} </h2>", res)) // TODO redirect home or err
+    match Category::add_category(&form_data.category, &app_data.db) {
+        Ok(_) => redirect_to("/"),
+        Err(_) => redirect_to("/error/something went wrong"),
+    }
 }
 
 #[get("/category/{id}")]
@@ -111,6 +111,19 @@ async fn category(data: web::Data<AppData>, path: web::Path<i32>) -> impl Respon
     HttpResponse::Ok().body(rendered)
 }
 
+#[get("/error/{mgs}")]
+async fn error_page(data: web::Data<AppData>, msg: web::Path<String>) -> impl Responder {
+    let mut ctx = Context::new();
+    let title = "Error";
+    ctx.insert("title", title);
+    ctx.insert("error_msg", &msg.into_inner());
+    let rendered = data
+        .tera
+        .render("error.html", &ctx)
+        .expect("Template not found 'error.html'");
+    HttpResponse::Ok().body(rendered)
+}
+
 #[get("*")]
 async fn not_found(data: web::Data<AppData>) -> impl Responder {
     let mut ctx = Context::new();
@@ -121,4 +134,8 @@ async fn not_found(data: web::Data<AppData>) -> impl Responder {
         .render("404.html", &ctx)
         .expect("Temeplate not found '404.html'");
     HttpResponse::NotFound().body(rendered)
+}
+
+fn redirect_to(url: &str) -> impl Responder {
+    HttpResponse::Found().header(header::LOCATION, url).finish()
 }

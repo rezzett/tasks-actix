@@ -244,6 +244,16 @@ select {
     min-height: 100%;
 }
 
+.error_page {
+    text-align: center;
+}
+
+.error_msg {
+    background-color: red;
+    color: #fff;
+    padding: 30px;
+}
+
 .not_found_container {
     text-align: center;
 }

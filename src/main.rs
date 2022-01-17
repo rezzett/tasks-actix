@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
             .service(add_task_post)
             .service(category)
             .service(delete_task)
+            .service(error_page)
             .service(not_found)
     })
     .bind("127.0.0.1:8081")?
