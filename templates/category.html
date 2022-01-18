@@ -12,14 +12,18 @@
             </ul>
         </div>
         <div class="content">
-            {% for task in tasks %}
-                <div class="task-card">
-                    <p>{{task.content}}</p>
-                    <a class="close_btn" href="/task/{{task.id}}">
-                        <img src="/static/close.png" alt="">
-                    </a>
-                </div>
-            {% endfor %}
+            {% if tasks %}
+                {% for task in tasks %}
+                    <div class="task-card">
+                        <p>{{task.content}}</p>
+                        <a class="close_btn" href="/task/{{task.id}}">
+                            <img src="/static/close.png" alt="">
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>There is no tasks yet.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock content %}

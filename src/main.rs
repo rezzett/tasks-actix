@@ -29,7 +29,8 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         let db = establish_conn();
         let app_data = AppData {
-            tera: Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*")).unwrap(),
+            tera: Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"))
+                .expect("Failed to resolve the template directory."),
             db,
         };
         App::new()

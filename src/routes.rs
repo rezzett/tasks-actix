@@ -17,8 +17,8 @@ struct TaskForm {
 
 #[get("/")]
 async fn index(data: web::Data<AppData>) -> impl Responder {
-    let categories = Category::all(&data.db).unwrap(); // TODO unwrap
-    let tasks = Task::all_with_category(&data.db).unwrap();
+    let categories = Category::all(&data.db).unwrap_or(vec![]);
+    let tasks = Task::all_with_category(&data.db).unwrap_or(vec![]);
     let title = "Home";
 
     let mut ctx = Context::new();
@@ -35,7 +35,7 @@ async fn index(data: web::Data<AppData>) -> impl Responder {
 
 #[get("/addtask")]
 async fn add_task_get(data: web::Data<AppData>) -> impl Responder {
-    let categories = Category::all(&data.db).unwrap(); // TODO remove unwrap
+    let categories = Category::all(&data.db).unwrap_or(vec![]);
     let title = "Add Task";
 
     let mut ctx = Context::new();
@@ -95,9 +95,19 @@ async fn add_category_post(
 #[get("/category/{id}")]
 async fn category(data: web::Data<AppData>, path: web::Path<i32>) -> impl Responder {
     let cat_id = path.into_inner();
-    let tasks = Task::by_category(&data.db, cat_id).unwrap(); // TODO unwrap
-    let categories = Category::all(&data.db).unwrap(); // TODO unwrap
-    let cat_name = Category::by_id(&data.db, cat_id).unwrap(); // TODO unwrap;
+    let tasks = Task::by_category(&data.db, cat_id).unwrap_or(vec![]);
+    let categories = Category::all(&data.db).unwrap_or(vec![]);
+    let cat_name = match Category::by_id(&data.db, cat_id) {
+        Ok(name) => name,
+        Err(_) => {
+            return HttpResponse::Found()
+                .header(
+                    header::LOCATION,
+                    "/error/DB ERROR: Failed to fetch category name",
+                )
+                .finish()
+        }
+    };
 
     let mut ctx = Context::new();
     ctx.insert("tasks", &tasks);
